@@ -1,0 +1,14 @@
+frmMain = 27, 26, 799, 573, C, 0, 0, 0, 0, C
+Split = 149, 103, 596, 511, C, 126, 80, 573, 488, C
+mObjGenAPI = 149, 103, 596, 511, C
+mVarProcCodeGen = 149, 103, 782, 511, C
+CADOXConnect = 149, 103, 700, 511, C
+CCnnTmp = 52, 70, 753, 603, C
+frmConnSQLServer = 149, 103, 596, 511, C, 0, 0, 0, 0, C
+CProgressBar = 149, 103, 596, 511, C
+frmEditor = 38, 148, 751, 556, C, 0, 0, 0, 0, C
+frmLibs = 41, 149, 758, 560, C, 0, 0, 0, 0, C
+frmCap = 158, 105, 752, 513, C, 0, 0, 0, 0, C
+frmSourceCode = 149, 103, 596, 511, C, 0, 0, 0, 0, C
+frmAbout = 138, 103, 585, 715, C, 0, 0, 0, 0, C
+HighlightSintax = 149, 103, 596, 511, CZ, 126, 80, 573, 488, C

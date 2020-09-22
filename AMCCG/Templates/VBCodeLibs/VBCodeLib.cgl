@@ -1,0 +1,23 @@
+/- Library Configuration -/
+[Main]
+title = Code Library Data for Visual Basic
+author = Alfredo Martinez C.
+date = 16/06/2001
+scripts = 3
+typelib = VBG
+
+/- Generate class module with SQL -/
+[CGT1]
+Title = Class Module With SQL
+Name = ClassModuleWithSQL.cgt
+
+/- Generate private constants -/
+[CGT2]
+Title = Private Constants
+Name = PrivateConstants.cgt
+
+/- Generate public constants -/
+[CGT3]
+Title = Public Constants
+Name = PublicConstants.cgt
+

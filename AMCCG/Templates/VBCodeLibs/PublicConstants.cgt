@@ -1,0 +1,13 @@
+/- Used With VB-SQL -/
+
+var icount;
+
+write "'Defined public constants based in fields of the table " & db.tbl.name & str.crlf;
+
+db.fld.first; set icount = 1;
+do until icount > db.tbl.fieldscount;
+   write "Public Const " & vb.fld.prefix & "_" & tbl.fld.name & " = " & (icount - 1) & str.crlf;
+   set icount = icount + 1;
+   db.fld.next;
+loop
+db.fld.first; set icount = 1;

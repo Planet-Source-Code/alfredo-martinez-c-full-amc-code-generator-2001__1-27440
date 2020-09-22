@@ -1,0 +1,265 @@
+var icount;
+set icount = 1;
+
+write "Option Explicit" & str.crlf & str.crlf;
+write "'Use with Visual Basci - SQL" & str.crlf;
+write "'Based in the table " & db.tbl.name;
+write "'The properties is based in the class obj" & db.tbl.name & str.crlf;
+write "'The template requiered function to validate errors" & str.crlf;
+write "'This template requiered one connection based in ADO 2.5, 2.6" & str.crlf;
+write "'Date and Time: " & sys.date & " - " & sys.time & str.crlf;
+write "'Author: " & cg.author & str.crlf;
+write "'Legal information: " & cg.legal & str.crlf;
+
+write str.crlf & str.crlf & str.crlf;
+write "'// Variables of properties" & str.crlf;
+do until icount > db.tbl.fieldscount;
+   write "Private m_" & vb.fld.prefix & "_" & tbl.fld.name & " As " & vb.fld.stringtype & str.crlf;
+   set icount = icount + 1;
+   db.fld.next;
+loop
+db.fld.first; set icount = 1;
+write "Public adoConn As ADODB.Connection" & str.crlf & str.crlf;
+write str.crlf & "'// Methods the read/write on properties" & str.crlf & str.crlf;
+
+
+do until icount > db.tbl.fieldscount;
+   write "'Property of read based in field " & tbl.fld.name & str.crlf;
+   write "Public Property Get " & tbl.fld.name & "() As " & vb.fld.stringtype & str.crlf;
+   write str.tab & tbl.fld.name & " = m_" & vb.fld.prefix & "_" & tbl.fld.name & str.crlf;
+   write "End Property" & str.crlf;
+
+   write "'Property of write based in field " & tbl.fld.name & str.crlf;
+   write "Public Property Let " & tbl.fld.name & "(ByVal v" & vb.fld.prefix & tbl.fld.name & " As " & vb.fld.stringtype & ")" & str.crlf;
+   write str.tab & "m_" & vb.fld.prefix & "_" & tbl.fld.name & " = v" & vb.fld.prefix & tbl.fld.name & str.crlf;
+   write "End Property" & str.crlf & str.crlf;
+
+   set icount = icount + 1;
+   db.fld.next;
+loop
+
+write str.crlf & str.crlf;
+
+db.fld.first; set icount = 1;
+write "'// Procedure for deleted records" & str.crlf;
+write "Public Sub Delete()" & str.crlf;
+write "Dim sSQL As String" & str.crlf; 
+write "Dim CMD As ADODB.Command" & str.crlf; 
+write "Dim nRowsAffected As Long" & str.crlf & str.crlf;
+
+write "On Error Goto DeleteError" & db.tbl.name & str.crlf & str.crlf;
+
+write str.tab & "sSQL = " & str.comma & "DELETE FROM " & str.comma & " & " & db.tbl.name & str.crlf;
+write str.tab & "sSQL = sSQL & " & str.comma & " WHERE " & str.comma & str.crlf;
+
+do until icount > db.tbl.fieldscount;
+   if tbl.fld.ispk = True then 
+      write str.tab & "sSQL = sSQL & " & str.comma & tbl.fld.name & str.comma & " = m_" & vb.fld.prefix & "_" & tbl.fld.name & " & " & str.comma & " And " & str.comma & str.crlf;
+   endif
+   db.fld.next;
+   set icount = icount + 1;
+loop
+db.fld.first; set icount = 1;
+write skiplastchar("And");
+write str.crlf;
+
+write str.tab & "Set CMD = New ADODB.Command" & str.crlf;
+write str.tab & "With CMD" & str.crlf;
+write str.tab & str.tab & ".ActiveConnection = adoConn" & str.crlf;
+write str.tab & str.tab & ".CommandText = sSQL" & str.crlf;
+write str.tab & str.tab & ".CommandType = adCmdText" & str.crlf;
+write str.tab & str.tab & ".Execute nRowsAffected" & str.crlf;
+write str.tab & "End With" & str.crlf & str.crlf;
+
+write "DeleteExit" & db.tbl.name & ":" & str.crlf;
+write str.tab & "Exit Sub" & str.crlf;
+
+write "DeleteError" & db.tbl.name & ":" & str.crlf;
+write str.tab & "Call GenError " & str.crlf;
+write str.tab & "Resume DeleteExit" & db.tbl.name & str.crlf;
+write "End Sub" & str.crlf & str.crlf & str.crlf;
+
+
+
+
+write "'Procedimiento para insertar un registro" & str.crlf;
+write "Public Sub Insert()" & str.crlf;
+write "Dim sSQL As String" & str.crlf;
+write "Dim CMD As ADODB.Command" & str.crlf;
+write "Dim nRowsAffected As Long" & str.crlf;
+
+write "On Error Goto InsertError" & db.tbl.name & str.crlf & str.crlf;
+
+write str.tab & "sSQL = " & str.comma & "INSERT INTO " & db.tbl.name & str.comma & str.crlf;
+write str.tab & "sSQL = sSQL & " & str.comma & " (" & str.comma & str.crlf;
+do until icount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = False then 
+      write str.tab & "sSQL = sSQL & " & str.comma & tbl.fld.name & " , " & str.comma & str.crlf;
+   endif
+   set icount = icount + 1;
+   db.fld.next;
+loop
+write str.tab & "sSQL = sSQL & " & str.comma & ") " & str.comma & str.crlf;
+
+db.fld.first; set icount = 1;
+write skiplastchar(","); 
+
+write str.tab & "sSQL = sSQL & " & str.comma & "VALUES " & str.comma & str.crlf;
+
+write str.tab & "sSQL = sSQL & " & str.comma & "(" & str.comma & str.crlf;
+do until icount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = False then  
+      write str.tab & "sSQL = sSQL & " & "m_" & vb.fld.prefix & "_" & tbl.fld.name & " & " & str.comma & " , " & str.comma & str.crlf;
+   endif
+   set icount = icount + 1;
+   db.fld.next;
+loop
+write str.tab & "sSQL = sSQL & " & str.comma & ") " & str.comma & str.crlf;
+
+db.fld.first; set icount = 1;
+write skiplastchar(",");
+write str.crlf;
+
+write str.tab & "Set CMD = New ADODB.Command" & str.crlf & str.crlf;
+
+write str.tab & "With CMD" & str.crlf;
+write str.tab & str.tab & ".ActiveConnection = adoConn" & str.crlf;
+write str.tab & str.tab & ".CommandText = sSQL" & str.crlf;
+write str.tab & str.tab & ".CommandType = adCmdText" & str.crlf;
+write str.tab & str.tab & ".Execute nRowsAffected" & str.crlf;
+write str.tab & "End With" & str.crlf & str.crlf & str.crlf;
+
+write "InsertExit" & db.tbl.name & ":" & str.crlf;
+write str.tab & "Exit Sub" & str.crlf & str.crlf;
+write "InsertError" & db.tbl.name & ":" &  str.crlf;
+write str.tab & "Call GenError" & str.crlf;
+write str.tab & "Resume InsertExit" & db.tbl.name & str.crlf;
+write "End Sub" & str.crlf & str.crlf & str.crlf;
+
+
+
+
+
+write "'Procedure for Select Records" & str.crlf;
+write "Public Sub GetData()" & str.crlf;
+write "Dim sSQL As String" & str.crlf;
+write "Dim RS As ADODB.Recordset" & str.crlf;
+write "On Error Goto GetDataError" & db.tbl.name & str.crlf & str.crlf;
+
+db.fld.first; set icount = 1;
+
+write str.tab & "Set RS = New ADODB.Recordset" & str.crlf & str.crlf;
+write str.tab & "RS.CursorLocation = adUseClient" & str.crlf & str.crlf;
+write str.tab & "sSQL = " & str.comma & "SELECT " & str.comma & str.crlf;
+
+do until icount > db.tbl.fieldscount;
+   write str.tab & "sSQL = sSQL & " & str.comma & tbl.fld.name & ", "  & str.comma & str.crlf;
+   set icount = icount + 1;
+   db.fld.next;
+loop 
+
+db.fld.first; set icount = 1;
+write skiplastchar(",");
+
+write str.tab & "sSQL = sSQL & " & str.comma & "FROM " & db.tbl.name & " WHERE " & str.comma & str.crlf;
+
+do until icount > db.tbl.fieldscount;
+   if tbl.fld.ispk = True then 
+      write str.tab & "sSQL = sSQL & " & str.comma & tbl.fld.name & " = " & str.comma & " & m_" & vb.fld.prefix & "_" & tbl.fld.name & " & " & str.comma & " And " & str.comma & str.crlf;
+   endif
+   db.fld.next;
+   set icount = icount + 1;
+loop
+
+db.fld.first; set icount = 1;
+write skiplastchar("And");
+write str.crlf;
+
+write str.tab & "Set RS.ActiveConnection = ADOConn" & str.crlf;
+write str.tab & "RS.Open sSQL, , adOpenForwardOnly, adLockReadOnly " & str.crlf & str.crlf;
+write str.tab & "If RS.RecordCount > 0 Then" & str.crlf;
+
+do until icount > db.tbl.fieldscount;
+   write str.tab & str.tab & "If Not IsNull(Rs(" & str.comma & tbl.fld.name & str.comma & ")) Then m_" & vb.fld.prefix & "_" & tbl.fld.name & " = Rs(" & (icount - 1) & ")" & str.crlf;
+   db.fld.next;
+   set icount = icount + 1;
+loop
+
+db.fld.first; set icount = 1;
+write str.tab & "End If" & str.crlf & str.crlf;
+
+write "GetDataExit" & db.tbl.name & ":" & str.crlf;
+write str.tab & "If Not RS Is Nothing Then" & str.crlf;
+write str.tab & str.tab & "If RS.State = adStateOpen Then" & str.crlf;
+write str.tab & str.tab & str.tab & "RS.Close" & str.crlf;
+write str.tab & str.tab & "End If" & str.crlf;
+write str.tab & str.tab & "Set RS = Nothing" & str.crlf;
+write str.tab & "End If" & str.crlf;
+write str.tab & "Exit Sub" & str.crlf & str.crlf;
+write "GetDataError" & db.tbl.name & ":" & str.crlf;
+write str.tab & "Call GenError" & str.crlf;
+write str.tab & "Resume GetDataExit" & db.tbl.name & str.crlf;
+write "End Sub" & str.crlf & str.crlf & str.crlf;
+
+
+
+
+
+
+write "'Procedure for Update Record" & str.crlf;
+write "Public Sub Update()" & str.crlf;
+write "Dim sSQL As String" & str.crlf;
+write "Dim CMD As ADODB.Command" & str.crlf;
+write "Dim nRowsAffected As Long" & str.crlf;
+write "On Error Goto UpdateError" & db.tbl.name & str.crlf & str.crlf;
+
+write str.tab & "sSQL = " & str.comma & "UPDATE " & db.tbl.name & " SET " & str.comma & str.crlf;
+
+do until icount > db.tbl.fieldscount;
+   if tbl.fld.ispk = False then 
+      write str.tab & "sSQL = sSQL & " & str.comma & tbl.fld.name & " = " & str.comma & " & m_" & vb.fld.prefix & "_" & tbl.fld.name & " & " & str.comma & ", " & str.comma & str.crlf;
+   endif
+   db.fld.next;
+   set icount = icount + 1;
+loop
+db.fld.first; set icount = 1;
+write skiplastchar(",");
+
+write str.tab & "sSQL = sSQL & " & str.comma & " WHERE " & str.comma & str.crlf;
+
+do until icount > db.tbl.fieldscount;
+   if tbl.fld.ispk = True then 
+      write str.tab & "sSQL = sSQL & " & str.comma & tbl.fld.name & str.comma & " = m_" & vb.fld.prefix & "_" & tbl.fld.name & " & " & str.comma & " And " & str.comma & str.crlf;
+   endif
+   db.fld.next;
+   set icount = icount + 1;
+loop
+db.fld.first; set icount = 1;
+write skiplastchar("And");
+write str.crlf;
+
+write str.tab & "Set CMD = New ADODB.Command" & str.crlf;
+write str.tab & "With CMD" & str.crlf;
+write str.tab & str.tab & ".ActiveConnection = adoConn" & str.crlf;
+write str.tab & str.tab & ".CommandText = sSQL" & str.crlf;
+write str.tab & str.tab & ".CommandType = adCmdText" & str.crlf;
+write str.tab & str.tab & ".Execute nRowsAffected" & str.crlf;
+write str.tab & "End With" & str.crlf & str.crlf;
+
+write "UpdateExit" & db.tbl.name & ":" & str.crlf;
+write str.tab & "Exit Sub" & str.crlf & str.crlf;
+write "UpdateError" & db.tbl.name & ":" & str.crlf;
+write str.tab & "Call GenError" & str.crlf;
+write str.tab & "Resume UpdateExit" & db.tbl.name & str.crlf;
+write "End Sub" & str.crlf & str.crlf & str.crlf;
+
+
+
+
+
+
+write "'Procedure for display message error" & str.crlf;
+write "Private Sub GenError()" & str.crlf;
+write str.tab & "MsgBox " & str.comma & "Error: [" & str.comma & " & Err & " & str.comma & "] " & str.comma & " & Error, vbCritical, App.Title" & str.crlf;
+write "End Sub" & str.crlf;
+
