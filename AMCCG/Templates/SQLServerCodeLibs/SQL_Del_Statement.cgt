@@ -1,0 +1,19 @@
+/- Delete Statement with SQL Server-/
+/- Expects Table -/
+
+var iCount;
+
+db.fld.first; set iCount = 1;
+
+write "DELETE FROM " & str.crlf;
+write str.tab & db.tbl.name & str.crlf & "WHERE " & str.crlf;
+db.fld.first;
+set iCount = 1;
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.ispk = True then
+      write str.tab & tbl.fld.name & " = @" & tbl.fld.name & " And " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar("and");

@@ -1,0 +1,80 @@
+/- General declration of variables and initializes values -/
+var iCount;
+set iCount = 1;
+db.fld.first;
+
+write "USE " & db.name & str.crlf & str.crlf; 
+write "IF EXIST (SELECT * FROM SYSOBJECTS WHERE ID = OBJECT_ID('sp_Ins_" & db.tbl.name & "') AND sysstat & 0xf = 4)" & str.crlf;
+write str.tab & "DROP PROCEDURE sp_Ins_" & db.tbl.name & str.crlf;
+write "GO" & str.crlf;
+
+write "CREATE PROCEDURE sp_Ins_" & db.tbl.name & str.crlf;
+write "/* -------------------------------------------------- " & str.crlf;
+write str.tab & "Procedure: sp_Ins_" & db.tbl.name & str.crlf;
+write str.tab & "Descrition: Insert Records from table: " & db.tbl.name & str.crlf;
+write str.tab & "Author: " & cg.author & str.crlf;
+write "   -------------------------------------------------- */" & str.crlf;
+
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = True then
+      write str.tab & "@" & tbl.fld.name & " " & str.tab & tbl.fld.stringtype & " OUTPUT , " & str.crlf;
+   else
+      if tbl.fld.isnull = True then
+         write str.tab & "@" & tbl.fld.name & " " & str.tab & tbl.fld.stringtype & " = NULL , " & str.crlf; 
+      else
+         write str.tab & "@" & tbl.fld.name & " " & str.tab & tbl.fld.stringtype & "," & str.crlf; 
+      endif
+   endif
+
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar(","); 
+
+write "As" & str.crlf;
+
+write str.tab & "INSERT INTO " & db.tbl.name & str.crlf;
+write str.tab & str.tab & "(" & str.crlf;
+set iCount = 1;
+db.fld.first;
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = False then
+      write str.tab & str.tab & tbl.fld.name & ", " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar(","); 
+write str.tab & str.tab & ")" & str.crlf;
+set iCount = 1;
+db.fld.first;
+write str.tab & "Values" & str.crlf;
+write str.tab & str.tab & "(" & str.crlf;
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = False then
+      write str.tab & str.tab & "@" & tbl.fld.name & ", " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar(","); 
+write str.tab & str.tab & ")" & str.crlf;
+set iCount = 1;
+db.fld.first;
+
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = True then
+      write str.tab & "SET " & tbl.fld.name & " = " & "@@Identity" & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+
+write str.tab & "RETURN @@ERROR";
+
+
+write str.tab & "-- Display the status of Procedure creation " & str.crlf;
+
+write str.tab & "IF @@ERROR = 0 PRINT 'Procedure Creation: prc_Ins_" & db.tbl.name & "  Succeeded'" & str.crlf;
+write str.tab & "ELSE PRINT 'Procedure Creation: prc_Ins_" & db.tbl.name & " Error on Creation'"  & str.crlf;
+write "GO" & str.crlf;

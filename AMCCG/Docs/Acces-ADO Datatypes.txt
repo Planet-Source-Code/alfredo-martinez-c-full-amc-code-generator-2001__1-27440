@@ -1,0 +1,16 @@
+Access Data Types vs. ADO Number Constant
+
+	  Acces Type	  ADO NumberConstant
+	----------------|----------------
+	Boolean		|	11
+	Byte		|	17
+	Integer		|	2
+	Long		|	3
+	Currency	|	6
+	Single		|	4
+	Double		|	5
+	Date/Time	|	7
+	Text		|	129
+	Binary		|	205
+	Memo		|	201
+	----------------|----------------

@@ -1,0 +1,56 @@
+/- General declration of variables and initializes values -/
+var iCount;
+set iCount = 1;
+db.fld.first;
+
+write "USE " & db.name & str.crlf; /- Test Comment -/
+
+write "IF EXIST (SELECT * FROM SYSOBJECTS WHERE ID = OBJECT_ID('sp_Del_" & db.tbl.name & "') AND sysstat & 0xf = 4)" & str.crlf;
+write str.tab & "DROP PROCEDURE sp_Del_" & db.tbl.name & str.crlf;
+write "GO" & str.crlf;
+
+write "CREATE PROCEDURE sp_Del_" & db.tbl.name & str.crlf;
+write "/* -------------------------------------------------- " & str.crlf;
+write str.tab & "Procedure: sp_Del_" & db.tbl.name & str.crlf;
+write str.tab & "Descrition: Delete Records from table: " & db.tbl.name & str.crlf;
+write str.tab & "Author: " & cg.author & str.crlf;
+write "   -------------------------------------------------- */" & str.crlf;
+
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.ispk = True then
+      write str.tab & "@" & tbl.fld.name & str.tab & tbl.fld.stringtype & ", " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+
+write skiplastchar(",");
+
+write "AS " & str.crlf;
+write str.tab & "DELETE FROM " & str.crlf;
+write str.tab & str.tab & db.tbl.name & str.crlf & str.tab & "WHERE " & str.crlf;
+
+db.fld.first;
+set iCount = 1;
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.ispk = True then
+      write str.tab & str.tab & tbl.fld.name & " = @" & tbl.fld.name & " And " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar("and");
+write str.tab & "IF ROWCOUNT = 0 " & str.crlf;
+write str.tab & str.tab & "BEGIN" & str.crlf;
+write str.tab & str.tab & str.tab & "RAISERROR ('No Rows affected...', 16, 1)" & str.crlf;
+write str.tab & str.tab & "END " & str.crlf;
+
+write str.tab & "RETURN @@ERROR" & str.crlf;
+
+write "GO" & str.crlf;
+
+write str.tab & "-- Display the status of Procedure creation " & str.crlf;
+
+write str.tab & "IF @@ERROR = 0 PRINT 'Procedure Creation: prc_Del_" & db.tbl.name & "  Succeeded'" & str.crlf;
+write str.tab & "ELSE PRINT 'Procedure Creation: prc_Del_" & db.tbl.name & " Error on Creation'"  & str.crlf;
+write "GO" & str.crlf;

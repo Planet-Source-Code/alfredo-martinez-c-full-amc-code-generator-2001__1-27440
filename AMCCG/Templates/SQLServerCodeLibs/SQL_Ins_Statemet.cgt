@@ -1,0 +1,33 @@
+/- General declration of variables and initializes values -/
+var iCount;
+db.fld.first; set iCount = 1;
+
+write "INSERT INTO " & db.tbl.name & str.crlf;
+write str.tab & "(" & str.crlf;
+set iCount = 1;
+db.fld.first;
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = False then
+      write str.tab & tbl.fld.name & ", " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar(","); 
+write str.tab & ")" & str.crlf;
+set iCount = 1;
+db.fld.first;
+write "Values" & str.crlf;
+write str.tab & "(" & str.crlf;
+do until iCount > db.tbl.fieldscount;
+   if tbl.fld.isidentity = False then
+      write str.tab & "@" & tbl.fld.name & ", " & str.crlf;
+   endif
+   db.fld.next;
+   set iCount = iCount + 1;
+loop
+write skiplastchar(","); 
+write str.tab & ")" & str.crlf;
+set iCount = 1;
+db.fld.first;
+

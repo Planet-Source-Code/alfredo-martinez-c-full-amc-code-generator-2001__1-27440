@@ -1,0 +1,24 @@
+/- Library Configuration -/
+[Main]
+title = Code Library Data for SQL Server
+author = Alfredo Martinez C.
+date = 16/06/2001
+scripts = 4
+typelib = SQL
+
+
+[CGT1]
+Title = SQL DELETE Stored Procedure
+Name = SQL_sp_Del.cgt
+
+[CGT2]
+Title = SQL INSERT Stored Procedure
+Name = SQL_sp_Ins.cgt
+
+[CGT3]
+Title = SQL DELETE Statement
+Name = SQL_Del_Statement.cgt
+
+[CGT4]
+Title = SQL INSERT Statement
+Name = SQL_Ins_Statemet.cgt
